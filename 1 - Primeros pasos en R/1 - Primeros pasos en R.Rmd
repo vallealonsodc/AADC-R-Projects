@@ -1,0 +1,495 @@
+---
+title: "1. Primeros pasos en R"
+output: html_notebook
+---
+
+Bibliografia consultada: <https://rpubs.com/Edimer/754932>
+
+## 1.1 Exploración de los tipos de datos.
+
+**A. Construya un vector, muéstrelo, nombre cada componente con un nombre o etiqueta,muestre un valor en concreto, realice la suma de todos sus valores en caso de ser un vector numérico, etc.**
+
+En primer lugar vamos a construir el vector, nombrar cada componente y mostrarlo.
+
+```{r}
+#Construcción del vector de valores
+valores <- c(4,5,3,2,1)
+
+#Construcción del vector de etiquetas
+etiquetas <- c("A","B","C","D","E")
+
+#Asociación de valores y etiquetas
+vec <- setNames(valores, etiquetas)
+print(vec)
+
+```
+
+Para mostrar un elemento concreto del vector hay que tener en cuenta que la primera posición del vector es la posición [1] y que, como hemos asociado una etiqueta a cada posición, podemos mostrar cada elemento según: i) su posición ii) su etiqueta.
+
+```{r}
+#Mostrar un valor concreto
+vec[1] # Mostrar elemento según su posición
+vec["D"] #<- Mostrar elemento según su etiqueta
+```
+
+Por último, vamos a realizar la suma de todos los valores contenidos en el vector.
+
+```{r}
+#Suma de los valores del vector
+sum(vec)
+```
+
+**B. Construya una matriz 3x3 con los números del 1 al 9. Realícelo de varias formas posibles. Muestre un valor en concreto de la matriz**
+
+Para generar una matriz tenemos la función `matrix()`. Hay que tener en cuenta que por defecto la matriz se rellena por columnas.
+
+Por ejemplo,
+
+```{r}
+#Construcción de la matriz
+matriz_ejemplo <- matrix(c(1,2,3,4,5,6,7,8,9))
+print(matriz_ejemplo)
+```
+
+Por tanto, para que sea de dimensión 3x3,
+
+```{r}
+#Construcción de la matriz
+matriz_columnas <- matrix(c(1,2,3,4,5,6,7,8,9),
+                 nrow = 3, ncol = 3)
+print(matriz_columnas)
+```
+
+Otra forma de construir la matriz podría ser por filas,
+
+```{r}
+matriz_filas <- matrix(c(1,2,3,4,5,6,7,8,9),
+                 nrow = 3, ncol = 3, byrow=TRUE)
+print(matriz_filas)
+```
+
+**Construya un DATA FRAME a partir de tres vectores, uno de cadenas y otros dos numéricos. Estudie su estructura, muestre sus primeros valores y estudie las formas de acceder tanto a sus valores concretos como a sus filas y columnas.**
+
+En primer lugar, un data frame es una estructura de datos tabular en R que se utiliza para almacenar conjuntos de datos en forma de tabla de base de datos.
+
+Cada columna en un data frame puede contener datos de diferentes tipos, pero todas las columnas deben tener la misma longitud. Esto lo hace útil para representar datos heterogéneos y estructurados.
+
+En este caso, en vez de dos vectores numéricos hemos utilizado un vector con valores lógicos para aportar mayor variabilidad del tipo de dato,
+
+```{r}
+#Definir los vectores 
+pacientes <- c("Juan", "Ana", "Pedro", "Maria")
+anyo_nacimiento <- c(2000, 1998, 1999, 1995)
+fumador <- c(TRUE, TRUE, FALSE, FALSE)
+
+#Construir el data frame
+df <- data.frame(Pacientes = pacientes, Anyo_nacimiento = anyo_nacimiento,
+                 Fumador = fumador)
+print(df)
+```
+
+Para estudiar su estructura,
+
+```{r}
+#Estudio de estructura del df
+str(df)
+```
+
+Para obtener los primeros valores (en este caso como hay tan pocos valores se muestran todos),
+
+```{r}
+head(df)
+```
+
+Vamos a probar cómo sería aumentando el número de valores del dataframe.
+
+```{r}
+#Definir los vectores aumentando el número de valores
+pacientes <- c("Juan", "Ana", "Pedro", "Maria",
+               "Juan", "Ana", "Pedro", "Maria",
+               "Juan", "Ana", "Pedro", "Maria",
+               "Juan", "Ana", "Pedro", "Maria",
+               "Juan", "Ana", "Pedro", "Maria",
+               "Juan", "Ana", "Pedro", "Maria",
+               "Juan", "Ana", "Pedro", "Maria",
+               "Juan", "Ana", "Pedro", "Maria")
+anyo_nacimiento <- c(2000, 1998, 1999, 1995,
+                     2000, 1998, 1999, 1995,
+                     2000, 1998, 1999, 1995,
+                     2000, 1998, 1999, 1995,
+                     2000, 1998, 1999, 1995,
+                     2000, 1998, 1999, 1995,
+                     2000, 1998, 1999, 1995,
+                     2000, 1998, 1999, 1995)
+fumador <- c(TRUE, TRUE, FALSE, FALSE,
+             TRUE, TRUE, FALSE, FALSE,
+             TRUE, TRUE, FALSE, FALSE,
+             TRUE, TRUE, FALSE, FALSE,
+             TRUE, TRUE, FALSE, FALSE,
+             TRUE, TRUE, FALSE, FALSE,
+             TRUE, TRUE, FALSE, FALSE,
+             TRUE, TRUE, FALSE, FALSE)
+
+#Construir el data frame
+df_aumento <- data.frame(Pacientes = pacientes,
+                         Anyo_nacimiento = anyo_nacimiento,
+                         Fumador = fumador)
+#Mostrar estructura
+str(df_aumento)
+```
+
+Notemos que en este ejemplo hay 32 observaciones o filas. Ahora probaremos a mostrar los primeros valores.
+
+```{r}
+head(df_aumento)
+```
+
+En este caso solo ha mostrado las 6 primeras observaciones o filas.
+
+Por otro lado, también podemos mostrar algún valor o conjunto de valores concreto,
+
+```{r}
+#Mostrar valor concreto según fila y columna
+valor <- df[3, "Pacientes"]
+print(valor)
+```
+
+```{r}
+#Mostrar el conjunto de valores de una fila concreta
+fila <- df[3,]
+print(fila)
+```
+
+```{r}
+#Mostrar el conjunto de valores de una columna concreta
+columna <- df[,"Fumador"]
+print(columna)
+```
+
+o bien,
+
+```{r}
+#Mostrar el conjunto de valores de una columna concreta
+columna <- df$Fumador
+print(columna)
+```
+
+**D. Construya una lista a partir de un vector, una matriz y una data frame que serán su contenido. Estudie como se accede al contenido de dicha lista y las distintas maneras de hacerlo.**
+
+En primer lugar, para construir una lista utilizamos la función `list()` y añadimos los elementos que queremos que contenga la lista.
+
+```{r}
+#Construcción de los elementos que contendrá la lista
+
+vector <- c(6,5,4,3,2,1)
+
+matriz <- matrix(1:6,
+                 nrow = 2, ncol = 3)
+
+df <- data.frame(M=c("A","B","C","D","E","F"), m=c("a","b","c","d","e","f"))
+
+lista <- list(vector, matriz, df)
+
+print(lista)
+
+```
+
+Ahora vamos a estudiar cómo acceder al contenido de la lista. Para acceder al elemento según su posición hay dos formas.
+
+La primera forma: `lista[]`, devuelve una lista con el elemento que contiene.
+
+```{r}
+#Acceder a los elementos según su posición
+ej <- lista[2]
+
+typeof(ej)
+```
+
+La segunda forma: `lista[[]]`, devuelve el elemento en sí, con el tipo de objeto que posee realmente el elemento.
+
+```{r}
+ej <- lista[[2]]
+
+typeof(ej)
+
+```
+
+Sabiendo esto también podemos realizar consultas más avanzadas. Por ejemplo, acceder a un subelemento de un elemento iterable de la lista.
+
+Para ello utilizamos la notación [[]] puesto que si queremos acceder a una posición del elemento original, necesitamos devolver el elemento en su tipo original.
+
+```{r}
+#Dentro del elemento vector de la lista, accede a un subelemento según su índice.
+lista[[1]][2]
+```
+
+```{r}
+#Dentro del elemento matriz de la lista, accede a un subelemento según las coordenadas
+
+#Coordenadas de una posición concreta
+lista[[2]][2,3]
+
+#Devuelve una columna completa de la matriz
+lista[[2]][,2]
+```
+
+```{r}
+#Dentro del elemento dataframe de la lista, accede a un subelemento según las etiquetas
+
+lista[[3]]["m"]
+```
+
+o bien,
+
+```{r}
+lista[[3]]$m
+```
+
+## 1.3 Carga de ficheros de datos
+
+**Estudie en la ayuda de R las funciones más importantes para importar un fichero con un data set a un objeto de R,concretamente, a un data frame:**
+
+-   read.table():
+
+Esta función se utiliza para leer archivos de texto delimitados por espacios en blanco (por defecto) o por cualquier otro delimitador especificado
+
+```{r}
+?read.table
+```
+
+-   read.delim():
+
+Esta función está específicamente diseñada para archivos de texto delimitados por tabulaciones.
+
+```{r}
+?read.delim
+```
+
+-   read.csv():
+
+Esta función se utiliza para leer archivos CSV (Comma-Separated Values), que son archivos de texto delimitados por comas
+
+```{r}
+?read.csv()
+```
+
+**Compare dos tipos de importación de dataset (csv) de prueba**
+
+En primer lugar,
+
+```{r}
+df<-read.csv("datos1_prueba.csv")
+df
+```
+
+En segundo lugar,
+
+```{r}
+df2<-read.csv("datos1_prueba.csv",stringsAsFactors = FALSE) 
+df2
+```
+
+La diferencia entre estos dos métodos radica en el trato de los atributos que contienen cadenas de caracteres. En el caso de `datos1_prueba.csv` ningún atributo contiene cadenas de caracteres por lo que vamos a probar con el dataset de `weather.csv`.
+
+```{r}
+df<-read.csv("weather.csv")
+head(df)
+
+#typeof(df[1,"X2"])
+```
+
+```{r}
+df2<-read.csv("weather.csv", stringsAsFactors = FALSE)
+head(df2)
+
+#typeof(df[1,"X2"])
+```
+
+La verdad es que no veo ninguna diferencia.
+
+## 1.4 Utilidad de las funciones gather y spread de la librería tidyr.
+
+En primer lugar importamos la librería `tidyr`.
+
+```{r}
+library(tidyr)
+```
+
+-   Función `gather()`:
+
+La función gather() de la biblioteca tidyr de R se utiliza para convertir datos de un formato "ancho" a un formato "largo".
+
+Esto es útil cuando tienes datos en los que las variables están dispersas en columnas y deseas reunirlas en una sola columna.
+
+La función gather() toma múltiples columnas y las combina en dos columnas: una que contiene los nombres de las variables originales (''clave'') y otra que contiene los valores asociados con esas variables.
+
+```{r}
+#Información de R sobre la función
+?gather
+
+df_aux<-gather(df,   #dataframe sobre el que se va a trabajar
+               time, #nuevo atributo que contiene la clave 
+               val,  #nuevo atributo que contiene el valor
+               X1:X3 #selecciona las columnas que se van a juntar
+               )
+
+df_aux[, c(1:5, 33:34)] #para mostrar solo las primeras y últimas columnas del df
+                        #que son las que se han modificado
+```
+
+-   Función `spread()`:
+
+La función spread() de la biblioteca tidyr de R se utiliza para convertir datos de formato "largo" a formato "ancho".
+
+Esto es útil cuando tienes datos donde las observaciones para una variable están repetidas en múltiples filas y deseas distribuir esos valores en columnas separadas.
+
+```{r}
+df_aux2<-spread(df_aux, #dataframe sobre el que se va a trabajar
+                time,   #atributo cuyas claves se convertirán en columnas
+                val     #atributo cuyos valores se distribuiran en las claves
+                )
+df_aux2 
+```
+
+Estas funciones son contrapuestas. Una hace la inversa de la otra. Una deshace lo que la otra hace.
+
+## 1.7 Sintaxis de escritura de funciones en R
+
+**Escriba una función que dado dos valores devuelva el mayor de ellos:**
+
+```{r}
+mayor_valor <- function(a,b){
+  if(a>b)
+    c = a
+  else 
+    c = b
+  return(c)
+}
+
+mayor_valor(8,3)
+mayor_valor(4,5)
+```
+
+**Escriba una función que imprima diez veces un nombre por consola: utilice un `for`:**
+
+```{r}
+imprime_for <- function(n){
+  for(i in 1:10){
+    print(n)
+  }
+}
+
+imprime_for("Hola, mundo")
+```
+
+**Escriba una función que imprima diez veces un nombre por consola: utilice un `while`:**
+
+```{r}
+imprime_while <- function(n){
+  i <- 1
+  while(i<10){
+    print(n)
+    i <- i + 1
+  }
+}
+
+imprime_while("Hola, mundo")
+```
+
+**Escriba una función que sume dos números y tome por defecto el segundo valor a diez:**
+
+```{r}
+sume <- function(a, b=10){
+  return(a+b)
+}
+
+sume(1,2)
+sume(1)   #utilizando el segundo valor por defecto
+```
+
+**Escriba una función que dados tres números devuelva el mayor:**
+
+```{r}
+mayor_tres <- function(a,b,c){
+  d <- a
+  if(b>d)
+    d <- b
+  if(c>d)
+    d <- c
+  return(d)
+}
+
+mayor_tres(7,5,3)
+mayor_tres(1,5,3)
+mayor_tres(1,5,7)
+
+```
+
+**Escriba una función que dada una lista de valores numéricos devuelva otra lista con aquellos valores que sean pares:**
+
+```{r}
+pares <- function(ls){
+  res <- c()
+  for(i in ls){
+    if(i%%2==0)
+      res <- c(res, i)
+  }
+  return(res)
+}
+
+lista = list(1,2,3,4)
+
+pares(lista)
+```
+
+**Escriba una función que dada una lista con valores numéricos devuelva la suma de los valores pares:**
+
+```{r}
+pares_suma <- function(ls){
+  res <- 0
+  for(i in ls){
+    if(i%%2==0)
+      res <- res + i
+  }
+  return(res)
+}
+
+lista = list(1,2,3,4)
+
+pares_suma(lista)
+```
+
+**Escriba una función que dada una lista de valores devuelva el mayor de los valores pares:**
+
+```{r}
+pares_mayor <- function(ls){
+  res <- 0
+  for(i in ls){
+    if(i%%2==0)
+      if(i>res)
+        res <- i
+  }
+  return(res)
+}
+
+lista = list(1,6,3,4)
+
+pares_mayor(lista)
+```
+
+**Escriba una función que dada una lista y un valor indique si se encuentra o no en dicha lista:**
+
+```{r}
+find <- function(ls, val){
+  res <- FALSE
+  for(i in ls)
+    if(i == val)
+      res <- TRUE
+  return(res)
+}
+
+lista = list(1,6,3,4)
+
+find(lista, 6)
+find(lista, 5)
+```
