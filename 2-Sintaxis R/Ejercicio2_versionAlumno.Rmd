@@ -1,0 +1,234 @@
+---
+title: "Introducción R II"
+output: html_document
+---
+
+
+# Expresiones relacionales 
+
+Vamos a resumir los operadores condicionales en R. Descomente las siguientes líneas de código y ejecútelas.
+
+```{r}
+# Comparación
+# TRUE == FALSE
+# TRUE == 1
+# 5!=8
+# 'hola' == 'adios'
+# 10>=0
+# 'hola'>'adios' 
+
+```
+
+R es muy bueno para trabajar con vectores de datos, veamos cómo funciona los operadores relacionales sobre vectores:
+
+```{r}
+# Vectores con las visitas de lunes a viernes de una cuenta en linkedin y otra de facebook
+linkedin <- c(16, 9, 13, 5, 2, 17, 14)
+facebook <- c(17, 7, 5, 16, 8, 13, 14)
+
+# Dias más populares, es decir, son aquellos que tienen más de 15 visitas
+
+
+# Dias con menos de 5 visitas
+
+
+# ¿Qué días son más populares linkedin qeu facebook?
+
+
+```
+
+Podemos comparar matrices sin tener que hacer un recorrido sobre las mismas:
+
+```{r}
+views <- matrix(c(linkedin, facebook), nrow = 2, byrow = TRUE)
+print('La matriz')
+views
+
+# ¿Qué días ha tenido 13 visitas?
+
+# ¿Qué días tiene 5 o menos visitas
+
+```
+
+La conjunción se representa con el operador & y la disyunción con el operador | que también puede aplicarse a vectores. Y cuidado que podemos ver el operador & y | dos veces entre vectores, en cuyo caso aplican el operador solo sobre el primer elemento de cada vector.
+
+```{r}
+
+# Dias que linkedin tiene más de 10 visitas y facebook menos de 10
+
+#Descomente para ver cómo funciona los operadores
+# c(FALSE, FALSE, TRUE) & c(TRUE, FALSE, TRUE)
+# c(FALSE, FALSE, TRUE) && c(TRUE, FALSE, TRUE)
+```
+
+Finalmente, la negación se expresa con el operador !.
+
+```{r}
+!FALSE
+```
+
+
+
+# Flujo de control
+
+En la hoja con conceptos básicos de R encontrará cómo realizar sentencias if-else, for y while. No obstante vamos a recordarlas:
+
+~~~
+if(condicion){
+ expresion_1
+}else{
+  expresion_2
+}
+~~~
+
+En caso de existir más de una condición lógica la sentencia if-else se escribiría: 
+
+~~~
+if(condicion1){
+  expresion_1
+}else if (condicion2){
+  expresion_2
+}else{
+  expresion_3
+}
+~~~
+
+Ahora, vamos a realizar un ejercicio: dada una variable x con un valor inicial imprimir por pantalla si es divisible por 2, por 3 o si no es divisible por 2 y 3.
+
+```{r}
+
+
+```
+
+
+En el caso de sentencias iterativas podemos trabajar con while y for:
+
+~~~
+while(condicion){
+  expresion
+}
+~~~
+
+~~~
+for(var in secuencia){
+  expresion
+}
+~~~
+
+Ahora vamos a realizar unos ejercicios.
+
+### Ejercicio while
+
+1. Crea una variable x con valor igual a 1 y mientras la variable sea menor a 10 imprima en pantalla el valor de x mientras que lo incrementa en una unidad.
+
+```{r}
+
+
+```
+
+### Ejercicios for 
+
+2. Cree un vector con nombre de ciudades y recorra dicha secuencia imprimiendo las ciudades
+
+```{r}
+ciudades <- c('New York', 'Paris', 'London', 'Madrid', 'Rio de Janeiro')
+
+
+```
+
+Realice el mismo recorrido sobre las ciudades, pero en el caso de encontrar una ciudad de 6 caracteres pare el recorrido:
+
+```{r}
+ciudades <- c('New York', 'Paris', 'London', 'Madrid', 'Rio de Janeiro')
+
+
+```
+
+También se podría haber realizado el recorrido con esta otra sintaxis, ¿sabes cuál?:
+
+```{r}
+ciudades <- c('New York', 'Paris', 'London', 'Madrid', 'Rio de Janeiro')
+
+
+```
+
+Realice el mismo recorrido sobre las ciudades, pero en el caso de encontrar una ciudad de 6 caracteres pare el recorrido:
+
+```{r}
+
+```
+
+3. Realice un recorrido imprimiendo cada elemento de la siguiente lista:
+
+```{r}
+nyc <- list(poblacion = 8405837, 
+            barrios = c("Manhattan", "Bronx", "Brooklyn", "Queens", "State Island"), 
+            capital = FALSE)
+
+
+```
+
+4. Realice un recorrido imprimiendo cada uno de los elementos de una matriz:
+
+```{r}
+m <- matrix(0, nrow = 3, ncol = 3)
+m
+
+
+
+```
+
+5. Dada la siguiente cita, cuente el número de r y si encuentra una g para el proceso.
+
+```{r}
+cita <- 'tres tristes tigres'
+
+
+```
+
+
+
+# Funciones
+
+Para documentarse sobre una función, en la consola debe ejecutar lo siguiente:
+
+help(sum)
+?sum
+
+y en caso de querer saber los argumentos de la función debe escribir:
+
+args(sum)
+
+Realice el siguiente ejemplo: calcule el número de visitas medias en linkedin y facebook, suponiendo que esa información está almacenada en las siguientes variables:
+
+```{r}
+
+linkedin <- c(16, 9, 13, 5, 2, 17, 14)
+facebook <- c(17, 7, 5, 16, 8, 13, 14)
+
+
+```
+
+Observa en la documentación de la función que aparece ... Este símbolo se llama elipsis. Es una forma de que R pase los argumentos sin que la función tenga que nombrarlos explícitamente. 
+
+Si te has fijado bien en la documentación de la función mean, observarás que hay parámetros opcionales y requeridos. En caso de ser parámetros opcionales la función debe tener especificado los valores por defecto en caso de no ser inicializados por el usuario.
+
+
+### Cómo crear una función
+
+En caso de crear una función se deberá seguir la siguientes sintaxis:
+
+
+~~~
+nombre_funcion <- function(args){
+  expresion
+}
+~~~
+
+Ejemlo, cree una función que consiste en dado dos números devolver la suma de sus valores absolutos:
+
+```{r}
+
+
+```
+
