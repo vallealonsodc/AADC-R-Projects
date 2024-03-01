@@ -4,18 +4,24 @@ output: html_document
 ---
 
 
-# Expresiones relacionales 
+## 2.1 Expresiones relacionales 
 
 Vamos a resumir los operadores condicionales en R. Descomente las siguientes líneas de código y ejecútelas.
 
 ```{r}
-# Comparación
-# TRUE == FALSE
-# TRUE == 1
-# 5!=8
-# 'hola' == 'adios'
-# 10>=0
-# 'hola'>'adios' 
+# Comparación de booleanos
+TRUE == FALSE
+
+TRUE == 1
+FALSE == 0
+
+#Comparación numérica
+5!=8
+10>=0
+
+#Comparación de cadenas
+'hola' == 'adios'  #según el contenido de la cadena
+'hola'>'adios'     #según el valor ASCII del primer caracter
 
 ```
 
@@ -27,39 +33,57 @@ linkedin <- c(16, 9, 13, 5, 2, 17, 14)
 facebook <- c(17, 7, 5, 16, 8, 13, 14)
 
 # Dias más populares, es decir, son aquellos que tienen más de 15 visitas
-
+linkedin[linkedin>15]
+facebook[facebook>15]
 
 # Dias con menos de 5 visitas
-
+linkedin[linkedin<5]
+facebook[facebook<5]
 
 # ¿Qué días son más populares linkedin qeu facebook?
-
+linkedin > facebook
 
 ```
 
 Podemos comparar matrices sin tener que hacer un recorrido sobre las mismas:
 
 ```{r}
-views <- matrix(c(linkedin, facebook), nrow = 2, byrow = TRUE)
+vw <- matrix(c(linkedin, facebook), nrow = 2, byrow = TRUE)
 print('La matriz')
-views
+vw
 
 # ¿Qué días ha tenido 13 visitas?
 
+colnames(vw) <- c("L","M","X","J","V","S","D")
+rownames(vw) <- c("link", "fbook")
+
 # ¿Qué días tiene 5 o menos visitas
+vw < 5
 
 ```
 
 La conjunción se representa con el operador & y la disyunción con el operador | que también puede aplicarse a vectores. Y cuidado que podemos ver el operador & y | dos veces entre vectores, en cuyo caso aplican el operador solo sobre el primer elemento de cada vector.
 
+
 ```{r}
 
 # Dias que linkedin tiene más de 10 visitas y facebook menos de 10
+vw[1,]>10 & vw[2,]<10
 
 #Descomente para ver cómo funciona los operadores
-# c(FALSE, FALSE, TRUE) & c(TRUE, FALSE, TRUE)
-# c(FALSE, FALSE, TRUE) && c(TRUE, FALSE, TRUE)
+c(FALSE, FALSE, TRUE) & c(TRUE, FALSE, TRUE)
 ```
+
+Si, sobre los mismos vectores utilizamos el doble operador da error, porque solo puede utilizarse entre escalares
+```{r}
+#c(FALSE, FALSE, TRUE) && c(TRUE, FALSE, TRUE)
+
+```
+pero si se evalua si el vector es de un único elemento sí se ejecuta
+```{r}
+c(FALSE) && c(FALSE)
+```
+
 
 Finalmente, la negación se expresa con el operador !.
 
@@ -67,9 +91,7 @@ Finalmente, la negación se expresa con el operador !.
 !FALSE
 ```
 
-
-
-# Flujo de control
+## 2.2 Flujo de control
 
 En la hoja con conceptos básicos de R encontrará cómo realizar sentencias if-else, for y while. No obstante vamos a recordarlas:
 
@@ -96,8 +118,16 @@ if(condicion1){
 Ahora, vamos a realizar un ejercicio: dada una variable x con un valor inicial imprimir por pantalla si es divisible por 2, por 3 o si no es divisible por 2 y 3.
 
 ```{r}
-
-
+ej <-function(x){
+  if(x%%2==0){
+   print("Es divisible por 2")
+  }else if(x%%3==0){
+   print("Es divisible por 3")
+  }else{
+   print("No es divisible")
+  }
+}
+ej(3)
 ```
 
 
@@ -123,6 +153,12 @@ Ahora vamos a realizar unos ejercicios.
 
 ```{r}
 
+x <- 1
+
+while(x<10){
+  print(x)
+  x <- x+1
+}
 
 ```
 
@@ -133,6 +169,9 @@ Ahora vamos a realizar unos ejercicios.
 ```{r}
 ciudades <- c('New York', 'Paris', 'London', 'Madrid', 'Rio de Janeiro')
 
+for(c in ciudades){
+  print(c)
+}
 
 ```
 
@@ -141,22 +180,30 @@ Realice el mismo recorrido sobre las ciudades, pero en el caso de encontrar una 
 ```{r}
 ciudades <- c('New York', 'Paris', 'London', 'Madrid', 'Rio de Janeiro')
 
+for(c in ciudades){
+  print(c)
+  if(nchar(c)==6)
+    break
+}
+
 
 ```
 
-También se podría haber realizado el recorrido con esta otra sintaxis, ¿sabes cuál?:
+También se podría haber realizado el recorrido con esta otra sintaxis, ¿sabes cuál?: 
 
 ```{r}
 ciudades <- c('New York', 'Paris', 'London', 'Madrid', 'Rio de Janeiro')
 
+i<-1
+while(i<length(ciudades)){
+  print(ciudades[i])
+  if(nchar(ciudades[i])==6)
+    break
+  i <- i+1
+}
 
 ```
 
-Realice el mismo recorrido sobre las ciudades, pero en el caso de encontrar una ciudad de 6 caracteres pare el recorrido:
-
-```{r}
-
-```
 
 3. Realice un recorrido imprimiendo cada elemento de la siguiente lista:
 
@@ -165,15 +212,21 @@ nyc <- list(poblacion = 8405837,
             barrios = c("Manhattan", "Bronx", "Brooklyn", "Queens", "State Island"), 
             capital = FALSE)
 
+for(e in nyc){
+  print(e)
+}
 
 ```
 
 4. Realice un recorrido imprimiendo cada uno de los elementos de una matriz:
 
 ```{r}
-m <- matrix(0, nrow = 3, ncol = 3)
+m <- matrix(1:9, nrow = 3, ncol = 3)
 m
 
+for(i in m){
+  print(i)
+}
 
 
 ```
@@ -182,6 +235,15 @@ m
 
 ```{r}
 cita <- 'tres tristes tigres'
+
+b <- 0
+for(i in strsplit(cita, "")[[1]]){
+  if(i=="r")
+    b <- b+1
+  if(i=="g")
+    break
+}
+print(b)
 
 
 ```
@@ -206,10 +268,10 @@ Realice el siguiente ejemplo: calcule el número de visitas medias en linkedin y
 linkedin <- c(16, 9, 13, 5, 2, 17, 14)
 facebook <- c(17, 7, 5, 16, 8, 13, 14)
 
-
+help(mean)
 ```
 
-Observa en la documentación de la función que aparece ... Este símbolo se llama elipsis. Es una forma de que R pase los argumentos sin que la función tenga que nombrarlos explícitamente. 
+Observa en la documentación de la función que aparece '...' Este símbolo se llama elipsis. Es una forma de que R pase los argumentos sin que la función tenga que nombrarlos explícitamente. 
 
 Si te has fijado bien en la documentación de la función mean, observarás que hay parámetros opcionales y requeridos. En caso de ser parámetros opcionales la función debe tener especificado los valores por defecto en caso de no ser inicializados por el usuario.
 
@@ -229,6 +291,10 @@ Ejemlo, cree una función que consiste en dado dos números devolver la suma de 
 
 ```{r}
 
+abs_sum <- function(x,y){
+  abs(x)+abs(y)
+}
 
+abs_sum(1,-2)
 ```
 

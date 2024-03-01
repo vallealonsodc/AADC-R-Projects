@@ -1,0 +1,328 @@
+---
+title: "Tidyverse: los pasajeros del Titanic"
+output: html_notebook
+---
+
+Vamos a analizar los datos de los pasajeros del Titanic disponibles en *Kaggle* en el enlace [Titanic: Machine Learning from Disaster](https://www.kaggle.com/c/titanic). En este ejercicio vamos a trabajar con las librerías **dplyr** y **ggplot2** de **Tidyverse**. 
+
+Primero debemos cargar dichas librerías. 
+
+```{r}
+
+# Instale (si no están previamente instaladas) y cargue dplyr y ggplot2
+
+
+```
+
+
+### Inicio
+
+Lea los datos usando la función **read_csv()**. Tena en cuenta donde están guardado el fichero. 
+
++ Si está guardado en el mismo directorio que el .Rmd se escribe: read.csv("data/Titanic.csv") 
+
++ Caso contrario: read.csv(".../Titanic.csv"), siendo los puntos suspensivos la ruta relativa. 
+
+Inspeccione las primeras filas de los datos. 
+
+```{r}
+
+# Leemos el fichero: (guardado en la carpeta data)
+#pasajeros <- read.csv("data/Titanic.csv") 
+
+# Vemos las primeras columnas
+
+
+```
+
+Fijese en el nombre de las observaciones o columnas. 
+
+```{r}
+
+# Nombres de las columnas
+
+```
+
+
+Es importante entender con qué observaciones o variables estamos trabajando para poder entender el problema. En [Kaggle](https://www.kaggle.com/c/titanic/data) puede ver algunos detalles extra sobre este dataset. 
+
++ PassengerId: el identificador del pasajero
++ Survived: si sobrevivió o no al naufragio
++ Pclass: la clase a la que pertenecía el pasajero (1ª, 2ª o 3ª)
++ Name: nombre
++ Sex: género 
++ Age: edad
++ SibSp: número de hermanos y cónyuges a bordo
++ Parch: número de padres e hijos a bordo
++ Ticket: número del billete
++ Fare: tarifa del billete
++ Cabin: número de camarote
++ Embarked: lugar donde había embarcado (C = Cherbourg, Q = Queenstown, S = Southampton)
+
+Utilice la función **str()** para comprender mejor los datos. ¿De qué tipo es cada variable? ¿Qué diferencia hay entre nume int?  
+
+```{r}
+
+# Función str()
+
+
+```
+
+Veamos un resumen estadístico de cada variable. Se puede hacer con la función **summary(pasajeros)** que está en R-base pero ¿recuerda como hacerlo al estilo de programación de Tidyverse? Observe los resultados. 
+
+```{r}
+
+# summary: utilice el autocompletar
+
+
+
+```
+
+¿Sabría como quitar aquellas filas que tengan valores perididos - missing values - a la vez que hace el resumen estadístico y todo ello concatenando dos instrucciones con el operador %>%? Concatene la función **drop_na()**, o la función **na.omit()**, con **summary()** .
+
+```{r}
+
+# Elimina filas con valores perididos: concatenación de instrucciones. 
+
+
+```
+
+### Exploración de los datos
+
+Vamos a trabajar con los verbos o funcions **filter()**, **arrange()** y **mutate()** de dplyr para explorar y modificar los datos. 
+
+Filtremos los datos según sean hombre o mujer. 
+
+Hombres en el Titanic: 
+
+```{r}
+
+# Filtramos los hombres: "male"
+
+
+
+```
+
+
+Mujeres en el Titanic: 
+
+```{r}
+
+# Filtramos los hombres: "female"
+
+
+
+```
+
+Observe la variable Survived de un caso y otro. ¿Observa algo interesante? Se puede intuir que sobrevivieron menos hombres que mujeres. 
+
+La variable Fare indica el precio que cada pasajero pagó por su billete. Ordenemos los datos, tanto en orden ascendente como descendente, según el precio de los billetes de los pasajeros. ¿Se puede intuir algo?
+
+Orden ascendente (del más barato al más caro) según el precio del billete:
+
+```{r}
+
+# Orden ascendente: Fare
+
+
+```
+
+
+Orden descendente (del más caro al más barato) según el precio del billete:
+
+```{r}
+# Orden descendente: Fare
+
+
+```
+
+Podemos intuir que el precio del billete estuvo relacionado con quien sobrevivió y quien no al hundimiento del barco. 
+
+Vamos a crear un variable nueva que se llame FamSize que una las variables Parch y SibSp. De esta forma hacemo un poco de **Ingeniería de Atributos** para tratar de determinar si el ir en grupo o no en el barco determinó sobrevivir a la catastrofe. 
+
+```{r}
+# Nueva columna: FamSize = Parch+SibSp
+#pasajeros %>% 
+#  mutate(FamSize = ______ )
+
+```
+
+Ordene de manera descendente los datos según el número de miembros en una familia. 
+
+```{r}
+
+# mutate+arrange
+
+
+# ¿Por qué no funciona directamente así? pasajeros %>% arrange(FamSize)
+
+
+```
+
+¿Las familias cuanto más numerosas se salvaron o no? Es decir, ¿aquellos pasajeros que iban en grupo lo tuvieron más fácil o más difícil para salvarse de la catástrofe?
+
+El verbo **mutate()** permite crear una columna nueva pero también permite modificar una ya existente. Modifiquemos la columna Survived de 0 y 1 a "No" y "Yes". Guardamos la el resultado en una variable auxiliar de nombre "pasajeros1".
+
+
+```{r}
+
+# Escriba en el verbo mutate: Survived=ifelse(Survived==0, "No", "Yes")
+
+
+# Veamos los datos
+
+
+
+```
+
+### Visualización del conjunto de datos
+
+Utilicemos el paquete **ggplot2** para visualizar los datos y realizar una serie de gráficas que nos ayuden a entenderlos. 
+
+Recuerde, nos debemos centrar en: 
++ dataset
++ aes: o el aspecto de la gráfica. (Eje x, y, tamaño de los puntos, etc)
++ layers: o las capas addicionales para elegir el tipo de gráfica (puntos, barras, etc)
+
+Realicemos una **gráfica de barras** según el género de los pasajeros. Usamos la capa: **geom_bar**
+
+```{r}
+
+# Escriba esta línea pero usando el operador pipe:
+# ggplot(passengers, aes(x = Sex)) + geom_bar()
+
+
+# Tenga cuidado: al poner la capa - el layer - se usa un '+' en lugar del '%>%'
+
+```
+
+
+Se puede comprobar que embarcaron muchos más hombres que mujeres en el Titanic. 
+
+
+Representemos la edad edad frente al precio del billete Age/Fare. Usamos la capa **geom_point**
+
+```{r}
+
+# Elija x=Age,y=Fare y use el autcompletar
+
+
+```
+
+
+Repita la gráfica anterior de tal manera que se distingan los hombres y las mujeres según el color de cada punto. 
+
+```{r}
+
+# Incluya color = Sex en la gráfica anterior
+
+
+# Si escribe color == Sex no colorea, ¿por qué?
+
+```
+
+
+Repita la gráfica anterior pero separándola en dos gráficas según el pasajero sobreviviera o no sobreviviera. Incluya, para ello, una capa adicional: **facet_grid()**.  
+
+```{r}
+
+# Escriba ~Survived dentro de facet_grid()
+
+
+```
+
+Con la gráfica anterior se puede **extraer bastante información** del problema. Obsérvela con detenimiento y extraiga algunas conclusiones. 
+
+Tras echarle un vistazo - en caso de no haber observado nada siempre puede ver la película de [James Cameron](https://es.wikipedia.org/wiki/Titanic_(pel%C3%ADcula_de_1997)) - parece sobrevivieron mucho más las mujeres que los hombres. Confirme esta información haciendo una gráfica de barras que separe los pasajeros según su género y, por otro lado, según si sobrevivieron a la catástrofe. 
+
+Utilice la variable pasajeros1 que generó más arriba. 
+
+```{r}
+
+# Escriba x = Sex,fill = Survived en aes
+#pasajeros1 %>% 
+#  ggplot(aes(x = Sex,fill = Survived)) +
+#  geom_bar()
+
+# ¿Por qué no se colorea bien si trabaja con pasajeros en lugar de con pasajeros1?
+
+
+```
+
+
+### Resumen de los datos
+
+El verbo **summarise** permite resumir los datos en el sentido que podemos calcular una serie de momentos estadísticos: media, mediana, etc. En general, permite resumir en un valor una variable o un grupo de ellas. Por otro lado, el verbo **group_by** permite clasificar o separar los datos según alguna característica común. 
+
+Calculemos el precio medio de los billetes. El resultado se almacenará en una variable de nombre 
+
+
+```{r}
+
+# Escriba en la función summarise: precio_medio = mean(Fare) 
+
+
+# Nota 1: ¿por qué no funciona si escribe precio_medio = Fare?
+# Nota 2: ¿qué ocurre si escribe mean(Fare)?
+
+```
+
+Repita la operación calculando la mediana en lugar de la media. 
+
+```{r}
+
+# La mediana: median
+
+
+
+```
+
+
+Repita la media pero diferenciando si son hombres o mujeres. Es decir, combine la operación anterior con un filtrado. 
+
+Si son hombres: 
+
+```{r}
+
+# Filtro: Sex == "male" y el resultado lo almacenamos en una variable "precio_medio_hombres"
+
+
+```
+
+Si son mujeres: 
+
+```{r}
+
+# Resultado lo almacenamos en una variable "precio_medio_mujeres"
+
+
+```
+
+El verbo **summarise** puede realizar varios cálculos a la vez. Por ejemplo, podemos almacenar en una variable de nombre "precio_medio_mujeres" el precio del billete y, a la vez, generar otra variable, que se llame "num_mujeres_supervivientes", donde contemos el número de mujeres que sobrevivieron. 
+
+```{r}
+
+# Se usará: mean(Fare) y sum(Survived) 
+
+
+# ¿Si usa pasajeros1 en lugar de pasajeros funciona la instrucción anterior? ¿Por qué?
+
+```
+
+
+Podríamos repetir el cálculo anterior filtrando por hombres pero no es necesario. El verbo **group_by** permite asociar - separa por grupos las instancias de los datos - por un lado el cálculo a los hombres y, por el otro, a las muejers. 
+
+Repita la operación anterior pero cambiando **filter** por **group_by**.
+
+```{r}
+
+# Cambie el nombre de las variables: precio_medio y num_supervivientes
+
+
+```
+
+### Bibliografía
+
+Este ejercicio es una adaptación del tutorial [Getting Started with the Tidyverse: Tutorial](https://www.datacamp.com/community/tutorials/tidyverse-tutorial-r)
+
+

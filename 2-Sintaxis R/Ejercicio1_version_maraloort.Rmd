@@ -1,9 +1,9 @@
 ---
 title: "Introducción R"
 output:
-  word_document: default
-  pdf_document: default
   html_notebook: default
+  pdf_document: default
+  word_document: default
 ---
 
 # Ejercicio 1: Tipos de datos
@@ -12,7 +12,7 @@ output:
 
 Realice una serie de experimentos para familiarizarse o recordar los tipos de datos más usados en R.
 
-### Vectores
+### 1.1Vectores
 
 Construya un vector, muéstrelo, nombre cada componente con un nombre o etiqueta, muestre un valor en concreto, realice la suma de todos sus valores en caso de ser un vector numérico.
 
@@ -22,9 +22,11 @@ La selección de elementos en los vectores puede realizarse por posición, valor
 # Crea un vector de números
 v <- c(9,-2,3,-2)
 print(v)
+
 # Añade nombre a las columnas
 names(v) <- c("primero", "segundo", "tercero", "cuarto")
 print(v)
+
 # Imprime la suma de los elemento
 print(sum(v))
 ```
@@ -35,49 +37,67 @@ La selección de elementos en los vectores puede realizarse por posición, valor
 ```{r}
 # Imprime el elemento de la segunda posición
 print(v[2])
+
 # Imprime los elementos entre dos posiciones
 print(v[2:3])
+
 # Imprime todos menos el primero
 print(v[-1])
+
 # Imprime que elementos son mayor a 0 
 print(v>0)
 
 # Imprima los valores igual a -2
 print(v[v==-2])
+
 # Imprima los valores menor a 5
+print(v[v>5])
 
 # Imprima los valores en un conjunto dado.
 print(v %in% c(9,4,2))
 print(v[v %in% c(9,4,2)])
+
 # Imprima el elemento con nombre 'primero'
+print(v['primero'])
 ```
 
-### Matrices
+### 1.2 Matrices
 
 Construya una matriz 3x3 con los números del 1 al 9. Realícelo de varias formas posibles. Muestre un valor en concreto de la matriz. 
 
 ```{r}
 # Crear llamando a la función matrix y pasando un vector con los 9 números utilizando la función c
-
+m <- matrix(data=c(1,2,3,4,5,6,7,8,9), 
+       nrow = 3,
+       ncol = 3)
+print(m)
 
 # Crear llamando a la función matrix y generando números de 1:9
-
-
+m <- matrix(data=c(1:9), 
+       nrow = 3,
+       ncol = 3)
+print(m)
+   
 
 # Acceda el elemento de la posición 1 y 2 de la matriz
+m[1,1]
+m[2,1]
 
 
 # Selecciones la primera fila 
-
+m[1,]
 
 # Seleccione la primera columna
-
+m[,1]
 
 # Transponga la matriz
 
+t(m)
+
+
 ```
 
-### Data frame
+### 1.3 Data frame
 
 Es un tipo especial de lista en donde todos sus elementos tienen la misma longitud.
 
@@ -87,18 +107,23 @@ Construya un data frame a partir de tres vectores, uno de cadenas y otros dos nu
 ```{r}
 # Cree el data frame
 
-# Utilice la función str y head para visualizar un resumen de los datos
+df <- data.frame("A" = c("a","b","c"), "B" = c(1,2,3), "C"= c(-1,-2,-3))
 
+# Utilice la función str y head para visualizar un resumen de los datos
+str(df)
+head(df)
 
 #Imprima el elemento de la posición 1,1
+df[1,1]
 
 #Imprimer fila
+df[1,]
 
 #Imprime columna
-
+df$A
 ```
 
-### Listas
+### 1.4 Listas
 
 El tipo lista es una colección de elementos en los que éstos pueden ser de diferente tipo.
 
@@ -108,12 +133,16 @@ Construya una lista a partir de un vector, una matriz y una data frame que será
 ```{r}
 #Crear una lista donde el primer elementos sean los 10 primeros números, el segundo elemento una matriz y el tercero el data frame creado anteriormente.
 
+ls <- list(c(1:10), m, df)
+
 # Imprime la lista
+print(ls)
 
 # Accede al primer elemento de la lista
+ls[1]
 
 # Accede al primer elemento de la lista su componente 1
-
+ls[[1]][1]
 
 ```
 
@@ -125,27 +154,27 @@ Funciones de utilidad en R:
 
 
 ```{r}
-
+getwd()
 ```
 
 •	¿Cómo se puede cambiar de directorio de trabajo desde una línea de código?
 
 
 ```{r}
-
+setwd('C:/Users/valle/Documents/GitHub/AADC-R-Projects/2-Sintaxis R')
 ```
 
 •	¿Cómo se pueden averiguar los objetos que están cargados en memoria en la sesión en la que estamos trabajando?
 
 ```{r}
 # Comprobacion de que no hay objetos previamente cargados
-
+ls()
 ```
 
 •	¿Sabe cómo borrarlos?
 
 ```{r}
-
+rm(list = ls())
 ```
 
 # Ejercicio 3
@@ -173,9 +202,12 @@ A modo de curiosidad, ejecute en la consola: edit(data.frame())
 ```{r}
 
 # Lea el fichero llamando a la función read.csv y pasando el nombre del fichero
-
+df<-read.csv("datos1_prueba.csv")
+df
 
 # Lea el fichero llamando a la función read.csv y poniendo el parámetro stringsAsFactors a false, ¿qué observa?
+df2<-read.csv("datos1_prueba.csv",stringsAsFactors = FALSE)
+df2
 
 ```
 
@@ -192,16 +224,21 @@ Así mismo, estudie mediante la función is.na(---), que no es de este paquete, 
 
 
 ```{r}
+install.packages("tidyr")
+library(tidyr)
+df_aux<-gather(df,
+               time, #key_name
+               val,  #value_name
+               t1:t3)
+df_aux
 
-# install.packages("tidyr")
-# library(tidyr)
-# df_aux<-gather(df,time,val,t1:t3)
-# df_aux
-# 
-# #Se expanden 
-# #una datset "largo" lo convierto en "ancho"
-# df_aux2<-spread(df_aux,time,val)
-# df_aux2
+#Se expanden 
+#una datset "largo" lo convierto en "ancho"
+df_aux2<-spread(df_aux,
+                time, #key_selected
+                val)   #value_selected
+                
+df_aux2
 is.na(df)
 sum(is.na(df))
 
