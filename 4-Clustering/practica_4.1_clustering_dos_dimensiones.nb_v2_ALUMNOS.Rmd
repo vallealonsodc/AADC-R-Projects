@@ -1,0 +1,209 @@
+---
+title: "Clustering: parte I"
+output: html_notebook
+---
+
+Los algoritmos de *clustering* - en español algoritmos de agrupamiento - construyen grupos de instancias con un mismo comportamiento. Se pueden ver, por lo tanto, como algoritmos que buscan patrones dentro de los datos que estudiamos. Tratan de buscar ejemplos del conjunto de datos con un mismo comportamiento. Ya hemos visto que los dos principales algoritmos son el k-means y los algoritmos de clustering jerárquico. 
+
+Veamos un ejemplo en el que trabajamos con puntos en el plano. De esta forma, trabajando con un ejemplo pequeño en tan sólo dos dimensiones, comprenderemos mejor el funcionamiento de estos algoritmos. 
+
+Trabajaremos con un fichero de nombre "toy_example.txt" que representa puntos en el plano (dos dimensiones).  
+
+```{r}
+
+# Carga el fichero:
+puntos<-read.delim("data/toy_example.txt",
+                   sep = "\t", 
+                   head = FALSE)
+
+# Visualiza su disposión en el plano
+plot(puntos) # Los representamos geometricamente
+
+```
+
+Explora brevemente el conjunto de datos: 
+
++ ¿cómo es el *dataframe*?
+
+```{r}
+
+# Función head: 
+
+
+```
+
+
++ estructura, para comprobar que son datos numéricos. 
+
+```{r}
+
+# Función str
+
+
+```
+
+
++ dimensión, para ver el número de puntos.  
+
+
+```{r}
+
+# Función dim
+
+
+```
+
+### Algoritmo k-Means
+
+El algoritmo k-Means se basa en la elección de un número de dado de centros de masa - de ahí el parámetro 'k' - y la proximidad, según una determinada distancia, de los puntos a cada uno de ellos. Cada centro de masa se recalcula, de manera iterativa, y cuando el proceso es estable se obtienen, por proximidad, los clústeres o grupos deseados. 
+
+Como ya comentamos, este algoritmo es muy rápido pero tiene como principal inconveniente el saber cuál es el mejor valor para el parámetro k. 
+
+Utiliza la función **kmeans** y aplica una vez el algoritmo con tres centros de masa. Valor de k=3. Nota: consulta los parámetros de entrada *help(kmeans)*. ¿Cuántos parámetros son obligatorios al hacer la llamada? ¿Cuál es el valor por defecto del parámetro *nstar*?
+
+
+```{r}
+
+# Aplicamos el algoritmo k-means con tres centros de masa y el parámetro nstar igual a 20
+
+
+```
+
+Inspeccionamos el resultado que hemos guardado, al hacer la llamada en una variable, 
+
++ ¿Qué devuelve la función *summary*?
+
+```{r}
+
+
+
+```
+
++ ¿Qué se obtiene al invocar "..$cluster" sobre la variable?
+
+```{r}
+
+
+
+```
+
++ ¿Y si imprime simplemente la variable?
+
+```{r}
+
+
+
+```
+
+Visualicemos los resultados mediante la función plot pero pasando como parámetro para el color los clústeres obtenidos. 
+
+```{r}
+
+
+
+```
+
+
+### Algoritmo k-Means: control de la aleatoriedad
+
+¿Para que sirve la condicion nstar=20? 
+
+Si has leído con detenimiento la ayuda habrás comprobado que el valor de este parámetro sirve para controlar la aleatoriedad, inherente al algoritmo k-Means. 
+
+Ejecutemos el algoritmo seis veces con el valor de *nstar=1* y, una vez visto los resultados, repitamos el experimento con *nstar=20*.
+
++ *nstar=1*
+
+
+```{r}
+
+
+
+
+```
+
+
++ *nstar=20*
+
+```{r}
+
+
+
+```
+
+Estudio en la ayuda para qué sirven los parámetros: 
++ nstar
++ nstar
+
+### Algoritmo k-Means: ¿cómo elegir el valor de k?
+
+Mira en la ayuda el significado *tot.withinss* o valor de compactación. Realizaremos varias ejecuciones del algoritmo variando el valor de k y veremos cómo afecta al valor de compactación. 
+
++ Ejecutamos el algoritmo variando el valor de k de manera incremental: de 1 a 15
++ Guardamos el valor de compactación en cada caso: los almacenamos en un vector
++ Representamos gráficamente esos valores
+
+Pegunta: ¿para qué valor de k se produce un cambio significativo? 
+
+(En este caso el valor es k=2)
+
+
+```{r}
+
+
+```
+
+
+### Clustering jerárquico
+
+Los algoritmos de clustering jerárquico se basan en la construcción de un dendograma que se "corta" de una determinada manera. En función de cómo se construya este dendograma, y cómo se realice el corte, obtendremos un resultado u otro. Consulta la función **hclust**
+
+Primero construimos el dendograma para lo cual:
+
++ Se construye la matriz de distancias. ¿Qué distancia toma por defecto
++ Se aplica la función hclust
+
+```{r}
+
+
+```
+
+Visualicemos el dendograma. 
+
+```{r}
+
+
+```
+
+Y en función de dicho dendograma, construimos los clústeres. Consulta la función **hclust** 
+
+
+```{r}
+
+```
+
+Estudiemos las distintas formas de construir el dendograma, en función de cómo definimos la idea de distancia de un punto a conjunto. 
+
+```{r}
+
+
+```
+
+Por finalizar, veamos algunas consideraciones adicionales con este ejemplo.
+
++ El problema del escalado
+
+```{r}
+
+
+```
+
+
++ Comparacion entre el k-Means y el Hierarchical clustering 
+
+
+```{r}
+
+```
+
+

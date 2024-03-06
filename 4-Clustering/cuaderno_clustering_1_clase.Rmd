@@ -1,0 +1,189 @@
+---
+title: "Clustering 1: Puntos en el plano"
+output: html_notebook
+---
+
+Vamos a realizar un estudio de clustering con un conjunto de datos en dos dimensiones.
+
+
+```{r}
+
+#Lectura del dataset
+puntos <- read.delim("data/toy_example.txt",
+                     sep = "\t",
+                     head = FALSE)
+
+#Visualización del dataset
+plot(puntos)
+
+```
+Le echamos un vistazo a los datos.
+
+```{r}
+head(puntos)
+str(puntos)
+dim(puntos)
+```
+
+# Algoritmo k-Means
+El algortmo k-Means requiere la inicialización de
+```{r}
+km_puntos <- kmeans(puntos, centers = 3, nstar=20)
+km_puntos
+
+#summary(km_puntos) <-- Parámetros del algoritmo
+km_puntos$cluster
+
+plot(puntos,
+     col=km_puntos$cluster, #colorea según los cluster del kMeans
+     main="Resultado del k-Means")
+
+```
+## Estudio sobre la aleatoriedad del k-Means
+
+Para esto vamos a realizar un pequeño experimento ejecutando varias veces el algoritmo.
+
+Vamos a estudiar cómo influye el valor del parámetro nstart.
+
+```{r}
+
+par(mfrow=c(2,3)) #Para mostrar una rejilla de 2x3
+
+for(i in 1:6){
+  #nstar=1
+  km_puntos_aux <- kmeans(puntos, center=3, nstart=1)
+  plot(puntos, col=km_puntos_aux$cluster, main=km_puntos_aux$tot.withinss)
+}
+
+```
+Se obtienen resultados de la compacidad muy diferentes entre sí.
+
+Ahora repetimos el experimento cambiando el valor del parámetro nstar=20
+```{r}
+
+par(mfrow=c(2,3)) #Para mostrar una rejilla de 2x3
+
+for(i in 1:6){
+  #nstar=20
+  km_puntos_aux <- kmeans(puntos, center=3, nstart=20)
+  plot(puntos, col=km_puntos_aux$cluster, main=km_puntos_aux$tot.withinss)
+}
+
+```
+La compacidad de la función mejora y además se queda estable.
+
+## Estudio sobre el parámetro k del K-means (center)
+
+En función de la compactación podemos tener alguna pauta de elección del valor de k
+
+El algoritmo funciona y escala muy bien pero tiene el gran inconveniente de que hay que imponer el valor k.
+
+Experimento: ejecutamos 15 veces el kmeans y estudiamos los resultados. En función de esta información elegimos el valor de k
+
+¿Para qué valor de k varía drásticamente el valor de k?
+
+```{r}
+#Ejecuta 15 veces variando el valor de k
+
+vector_compactacion <- 0
+
+for(i in 1:15){
+  km_puntos_center <- kmeans(puntos, center = i, nstart = 20)
+  vector_compactacion[i] <- km_puntos_center$tot.withinss
+}
+
+#Representa los valores de la compactación
+
+par(mfrow=c(1,1)) #Para quitar la rejilla
+
+plot(1:15, vector_compactacion,
+     type = "b",
+     xlab = "cluster", ylab="tot.withinss")
+
+```
+
+# Clustering jerárquico
+
+El algoritmo de clustering jerárquico no es tan escalable pero permite explorar el clustering sin necesidad de imponer un k previo.
+
+Recordemos que se construye un dendograma y en función de cómo se utilice obtendremos un resultado de clustering u otro.
+
+```{r}
+#Primero construimos la matriz de distancia entre los puntos
+matriz_distancias <- dist(puntos)
+
+#Ejecutamos el algoritmo
+hclust_aux <-
+```
+
+
+```{r}
+hclust(matriz_distancias)
+
+hclust_aux
+summary(hclust_aux)
+#hclust_aux$ --- Tened en cuenta que esto no es el dendograma, es el resultado del algoritmo
+
+#Representamos el dendograma
+plot(hclust_aux, hang=-2)
+
+```
+Se obtiene un dendograma y en función de como se corte el dendograma se obtiene un número de clusters distinto.
+
+```{r}
+#ver help(cutree)
+
+#Elegimos como cortar:
+
+#a) según la altura en el dendograma
+cutree(hclust_aux, h=7)
+
+#b) según el número de clusters deseado
+cutree(hclust_aux, k=3)
+
+```
+#Estudio sobre como afecta el "linkage" o manera de definir la distancia entre un punto y un grupo de puntos
+
+a) Complete
+```{r}
+hclust_complete <- hclust(matriz_distancias, method="complete")
+plot(hclust_complete, main="Distancia máxima: complete", hang=-2)
+```
+
+b) Average
+```{r}
+hclust_average <- hclust(matriz_distancias, method="average")
+plot(hclust_average, main="Distancia media: average", hang=-2)
+```
+
+c) Single
+```{r}
+hclust_single <- hclust(matriz_distancias, method="single")
+plot(hclust_single, main="Distancia mínima: single", hang=-2)
+```
+### Comentario:
+Comprobamos que el dataset de puntos esté bien escalado. 
+En este caso están bien escalados en las dos dimensiones. Si no se diese así, habría qeu hacer un escalado previo a la aplicación del algoritmo. No tiene sentido plantearse un clustering con valores de x e y en muy diferentes escalas-
+```{r}
+#Mostrar la escala de valores 
+colMeans(puntos)
+
+#Si se requierese escalado
+puntos_escalados <- scale(puntos)
+colMeans(puntos_escalados)
+```
+# Comparamos los resultados de los dos algoritmos
+
+Vemos los clusteres de kMeans y los del Jerárquico y vemos la relación.
+
+```{r}
+table(km_puntos$cluster, #filas=algoritmo kmeans
+      cutree(hclust_aux, k=2)) #columnas= algoritmo jerarquico
+```
+Los valores (i,j) representan el número de puntos que se reparten en los clusteres i,j de cada algoritmo.
+
+```{r}
+table(km_puntos$cluster, #filas=algoritmo kmeans
+      cutree(hclust_aux, k=3)) #columnas= algoritmo jerarquico
+```
+Por ejemplo, si fijo las filas, observaré "del cluster i del kMeans, se reparten tantos puntos en los clusters j del Jerárquico".
