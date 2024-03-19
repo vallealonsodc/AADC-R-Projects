@@ -113,12 +113,7 @@ Recordemos que se construye un dendograma y en función de cómo se utilice obte
 matriz_distancias <- dist(puntos)
 
 #Ejecutamos el algoritmo
-hclust_aux <-
-```
-
-
-```{r}
-hclust(matriz_distancias)
+hclust_aux <- hclust(matriz_distancias)
 
 hclust_aux
 summary(hclust_aux)

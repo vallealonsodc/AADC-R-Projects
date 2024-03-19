@@ -1,0 +1,131 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+ 
+
+```{r}
+wisc_df <- read.csv("C:/Users/valle/Documents/GitHub/AADC-R-Projects/4.1-CancerProject/data/WisconsinCancer.csv")
+
+
+str(wisc_df)
+head(wisc_df)
+tail(wisc_df)
+dim(wisc_df)
+```
+
+Nos hemos dado cuenta que tenemos que trabajar solo con las columnas desde la tercera en adelante. El clustering solo tiene sentido con datos numéricos
+```{r}
+#Construimos una matriz con la parte numérica del datafame
+wisc_data <- as.matrix(wisc_df[3:32])
+
+#Le ponemos los ids como nombre a las filas de la matriz
+rownames(wisc_data)<- wisc_df$id
+summary(wisc_data)
+head(wisc_data)
+```
+
+Nos damos cuenta que tenemos que escalar los datos para que todas las variables(las columnas de la matriz) tengan un mismo rango.
+```{r}
+wisc_data_escalados <- scale(wisc_data)
+summary(wisc_data_escalados)
+dim(wisc_data_escalados)
+```
+
+Una vez que hemos escalados los datos vemos que vamos a trabajar con 30 observaciones. Nos planteamos que podemos tratar de reducir la dimensionalidad del problema. Es decir, en lugar de trabajar en un espacio métrico de 30 dimensiones, hacerlo en uno con menos dimensiones.
+
+## Análisis de Componentes Principales o PCA
+Aplicamos un PCA
+
+```{r}
+
+wisc_pca <- prcomp(wisc_data_escalados, scale = TRUE)
+summary(wisc_pca)
+
+```
+
+Observamos viendo el ''cumulative proportion'' me quedo con aquellas componentes hasta que se quede con un valor por encima del 90% porque a partir de esa componente, la información que se pierde no es demasiado relevante para el funcionamiento de los algoritmos
+
+```{r}
+wisc_data_reduccion <- wisc_pca$x[,1:7]
+
+#biplot(wisc_pca) #Pintando el PCA no se observa nada
+
+par(mfrow = c(2,2))
+
+plot(wisc_pca$x[,c(1,2)], xlab= 'PC1', ylab='PC2')
+plot(wisc_pca$x[,c(1,2)], xlab= 'PC1', ylab='PC3')
+plot(wisc_pca$x[,c(1,2)], xlab= 'PC28', ylab='PC29')
+plot(wisc_pca$x[,c(1,2)], xlab= 'PC29', ylab='PC30')
+
+```
+Visto así vemos que los datos de las primeras componentes están más dispersos que en los últimos, por lo que son más interesantes para ejecutar el algoritmo de clustering.
+
+#Algoritmo del K-means  
+
+## Estudio sobre el parámetro k del K-means (center)
+```{r}
+#Ejecuta 15 veces variando el valor de k
+
+vector_compactacion <- 0
+
+for(i in 1:15){
+  km_puntos_center <- kmeans(wisc_data_reduccion, center = i, nstart = 20)
+  vector_compactacion[i] <- km_puntos_center$tot.withinss
+}
+
+#Representa los valores de la compactación
+
+par(mfrow=c(1,1)) #Para quitar la rejilla
+
+plot(1:15, vector_compactacion,
+     type = "b",
+     xlab = "cluster", ylab="tot.withinss")
+```
+Los valores de interés podrían ser de 2 a 4. Probemos gráficamente
+
+```{r}
+par(mfrow=c(2,2)) #Para mostrar una rejilla de 2x2
+
+for(i in 1:4){
+  #nstar=20
+  km_wisc_aux <- kmeans(wisc_data_reduccion, center=i, nstart=20)
+  plot(wisc_data_reduccion, col=km_wisc_aux$cluster, main=km_wisc_aux$tot.withinss)
+}
+```
+
+# Clustering jerárquico
+
+```{r}
+#Primero construimos la matriz de distancia entre los puntos
+matriz_distancias <- dist(wisc_data_reduccion)
+
+#Ejecutamos el algoritmo
+hclust_aux <- hclust(matriz_distancias)
+
+hclust_aux
+summary(hclust_aux)
+#hclust_aux$ --- Tened en cuenta que esto no es el dendograma, es el resultado del algoritmo
+
+#Representamos el dendograma
+plot(hclust_aux, hang=-2)
+```
+Viendo el dendograma se observa que el k=2 no es muy significativo, será más signficativo k=4. Sin embargo, vamos a comprobarlo pintando el gráfico jerárquico para cada valor de k. 
+```{r}
+cutree(hclust_aux, k=4)
+
+par(mfrow=c(2,2)) #Para mostrar una rejilla de 2x2
+
+for(i in 1:4){
+  cut <- cutree(hclust_aux, k=i)
+  plot(wisc_data_reduccion,col=cut, main=i)
+}
+
+```
+Observamos que el único clúster significativo es k=4.
+
+
+
+
+
