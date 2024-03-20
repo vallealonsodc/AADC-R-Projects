@@ -1,0 +1,200 @@
+---
+title: "Ejercicio de clase"
+output: html_notebook
+---
+# Ejercicio 1 - Decision tree
+
+## Lectura del dataset
+
+En primer lugar, vamos a realizar una lectura del dataset ''train.csv''.
+
+```{r}
+train <- read.delim('data/train.csv', sep = '\t', head = TRUE )
+rownames(train) <- train$id
+train$id <- NULL
+train
+```
+ Exploración inicial del dataset
+```{r}
+str(train)
+```
+```{r}
+dim(train)
+```
+```{r}
+#Fijar la semilla para reducir la aleatoriedad y aumentar la reproducibilidad del experimento
+set.seed(1)
+```
+
+## Entrenamiento del modelo de arbol de decisión
+
+En primer lugar vamos a instalar los paquetes necesarios
+```{r}
+#install.packages("rattle")
+library(rpart)
+library(rattle)
+library(RColorBrewer)
+```
+
+Generar el arbol de decisión:
+```{r}
+tree <- rpart(Survived~.,
+              #Predice el atributo 'Survived' en función del resto '.'
+              data=train, method="class")
+tree
+```
+```{r}
+fancyRpartPlot(tree)
+```
+Por tanto, para las siguientes afirmaciones:
+
+- El árbol predecirá que las pasajeras de la clase 3 no sobrevivirán, aunque está cerca -> Correcto. No sobrevive.
+
+- La clase mayoritaria del nodo raíz es positiva, lo que denota supervivencia. -> Incorrecto. No sobrevive.
+
+- El atributo que sigue al género hombre es una variable categórica. -> Incorrecto. Son ambas variables numéricas.
+
+## Predicción para el test
+
+Cargar el fichero de test:
+
+```{r}
+test <- read.delim('data/test.csv', sep = '\t', head = TRUE )
+rownames(test) <- test$id
+test$id <- NULL
+test
+```
+
+### Construir la matriz de confusión y calcular la accuracy de la predicción
+
+Realizar la predicción del modelo entrenado sobre el conjunto de test
+```{r}
+pred <- predict(tree, newdata = test, type = "class")
+pred
+```
+Construit la matriz de confusión a partir de la predicción
+```{r}
+conf <- table(test$Survived, pred)
+print(conf)
+```
+Calcular la accuracy:
+```{r}
+acc <- sum(diag(conf))/ sum(conf)
+print(acc)
+```
+
+# Segunda parte - Construcción de un árbol complejo
+
+## Segundo entrenamiento del modelo - cambiando el parámetro control
+Realizamos una visual inicial del modelo :
+```{r}
+tree2 <- rpart(Survived ~., train, method="class", 
+               control=rpart.control(cp=0.00001))
+
+fancyRpartPlot(tree2)
+```
+Observa que el modelo presenta sobreajuste, es demasiado complejo y los nodos inferiores presentan conjuntos de datos muy pequeños (1%, 2%...), por lo que si sobreajusta el train no funcionará bien con el test.
+
+Hay que podar el árbol:
+
+```{r}
+pruned <- prune(tree2, cp = 0.01)
+fancyRpartPlot(pruned)
+```
+Se obtiene un resultado muy similar a 'tree' por lo que no hemos ganado información de ninguna forma. Hay que probar otro procedimiento.
+
+## Tercer entrenamiento del modelo - cambiando el parametro split
+En este caso vamos a probar a cambiar la heurística con la que se realiza la partición, a ver si obtenemos un resultado distinto.
+
+Probamos con ''information'':
+```{r}
+tree_i <- rpart(Survived~., data=train, method="class",
+                parms = list(split="information"))
+fancyRpartPlot(pruned)
+```
+El resultado es muy parecido
+
+Vamos a probar como se comporta la predicción sobre test
+```{r}
+pred_i <- predict(tree, newdata = test, type = "class")
+```
+Calcular la matriz de confusión
+```{r}
+conf <- table(test$Survived, pred_i)
+print(conf)
+```
+
+Calcular la accuracy:
+```{r}
+acc <- sum(diag(conf))/ sum(conf)
+print(acc)
+```
+
+# Ejercicio 2 - Curvas ROC
+
+## Segunda predicción - cambiando el parámetro 'type'
+
+Vamos a cambiar el tipo de predicción a realizar. Si bien antes estábamos realizando una predicción que daba como resultado la clase más probable (type='class'), ahora vamos a realizar una predicción que de como resultado la probabilidad de que sea cierta clase (tyoe='prob').
+
+```{r}
+all_probs <- predict(tree, test, type="prob")
+summary(all_probs)
+```
+```{r}
+all_probs[,2]
+probs <- all_probs[,2]
+```
+## Curvas ROC
+Copiado de clase sin mucha más información
+```{r}
+#install.packages("ROCR")
+library(ROCR)
+```
+
+```{r}
+# Make a prediction object: pred
+pred <- prediction(probs, test$Survived)
+
+# Make a performance object: perf
+perf <- performance(pred, "tpr", "fpr")
+
+# Plot this curve
+plot (perf)
+```
+
+```{r}
+test<-read.delim("data/test.csv", sep = "\t", head = TRUE)
+train<-read.delim("data/train.csv", sep="\t", head = TRUE)
+
+# Store the Survived column of train and test in train labels and test labels
+train_labels <- train$Survived
+test_labels <- test$Survived
+
+# Copy train and test to knn train and knn test
+knn_train <- train
+knn_test <- test
+
+# Drop Survived and id column for knn_ train and knn_test
+knn_train$Survived <- NULL
+knn_train$id <- NULL
+knn_test$Survived <- NULL
+knn_test$id <- NULL
+```
+
+```{r}
+# Load the class package
+library(class)
+
+knn_train$Sex <- as.numeric(knn_train$Sex)
+knn_test$Sex <- as.numeric(knn_test$Sex)
+
+pred <- knn(train = knn_train, test = knn_test, cl = train_labels, k = 5)
+
+# Construct the confusion matrix: conf
+tab <- table(test_labels, pred)
+
+# Print out the confusion matrix
+tab
+acc_knn <- sum(diag(tab)) / sum (tab)
+```
+
