@@ -1,0 +1,146 @@
+---
+title: "Regresión Kanguros"
+output: html_notebook
+---
+
+# Ejercicio 1- Regresión lineal simple
+
+En primer lugar, cargamos el dataset sobre la nariz de una población de canguros grises.
+```{r}
+kang_nose <-read.delim("data/kanguros.csv", sep = "\t", head = TRUE)
+kang_nose
+```
+Realizamos una breve inspección inicial
+```{r}
+head(kang_nose)
+```
+```{r}
+str(kang_nose)
+```
+```{r}
+dim(kang_nose)
+```
+Modificamos el nombre de las variables
+```{r}
+colnames(kang_nose) <- c('nose_lenght','nose_width')
+colnames(kang_nose)
+```
+## Análisis exploratorio
+
+Primero, dibujamos las observaciones en el plano
+```{r}
+plot(kang_nose$nose_width, 
+     kang_nose$nose_lenght)
+
+#plot(kang_nose, xlab= 'nose_width', ylab = 'nose_lenght')
+```
+Vamos a realizar una aproximación de los valores con la función lm
+```{r}
+modelo <- lm(nose_lenght ~ nose_width, data = kang_nose)
+summary(modelo)
+```
+Vamos a predecir los valores para un nuevo canguro
+```{r}
+#crea un df nuevo
+nose_width_new <- kang_nose[1,]
+nose_width_new
+```
+```{r}
+#predict
+pred <- predict(modelo, nose_width_new)
+pred
+```
+```{r}
+plot(kang_nose, xlab= 'nose_width', ylab = 'nose_lenght')
+abline(modelo$coefficients, col='red')
+```
+Ahora  vamos a valorar el rendimiento mediante el error RMSE
+```{r}
+nose_length_set <- predict(modelo)
+res <- kang_nose$nose_lenght - nose_length_set
+
+rmse <- sqrt(mean(res^2))
+rmse
+```
+También podemos utilizar la métrica R^2
+```{r}
+#Manualmente
+ss_res <- sum(res^2)
+ss_tot <- sum((kang_nose$nose_lenght - mean(kang_nose$nose_lenght))^2)
+
+r_sq <- 1 - (ss_res/ss_tot)
+r_sq
+```
+```{r}
+summary(modelo)$r.squared
+```
+
+# Ejercicio 2 - Banco Mundial 
+
+En primer lugar, cargamos el dataset
+```{r}
+world_bank_train <-read.delim("data/world_bank_train.csv", sep = "\t", head = TRUE)
+world_bank_train$id <- NULL
+head(world_bank_train)
+```
+```{r}
+str(world_bank_train)
+dim(world_bank_train)
+```
+
+
+# Predicción de un nuevo valor
+Para predecir un nuevo valor primero entrenamos un modelo y vemos el rendimiento según la métrica R2
+```{r}
+#Entrenamos un modelo
+modelo <- lm(urb_pop ~., world_bank_train)
+
+#abline(modelo$coefficients, col='red)
+
+summary(modelo)$r.squared
+```
+El valor de R2 es muy bajo porque cgdp está expresada en percentiles. Vamos a reajustar el modelo.
+```{r}
+plot(urb_pop ~ log(cgdp), data = world_bank_train,
+ xlab = "log(GDP per Capita)",
+ ylab = "Percentage of urban population")
+abline(modelo$coefficients, col='red')
+```
+```{r}
+# Linear model: change the formula
+lm_wb <- lm(urb_pop ~ log(cgdp), data = world_bank_train) 
+summary(lm_wb)$r.squared
+```
+Ahora el valor de R2 mejora.
+
+
+# Ejercicio 3 - Regresión multivariable
+
+Ahora vamos a cargar un dataset sobre ventas que involucra más de dos variables (multivariable)
+```{r}
+ventas <-read.delim("data/sales.csv", sep = "\t", head = TRUE)
+head(sales)
+```
+
+```{r}
+dim(ventas)
+str(ventas)
+```
+En primer lugar, ploteamos el dataset
+```{r}
+plot(ventas, ventas$sales)
+```
+
+```{r}
+#Modelo linear
+lm_modelo <- lm(sales ~., ventas)
+
+summary(lm_modelo)
+```
+
+```{r}
+plot(lm_modelo$fitted.values, lm_modelo$residuals,
+ xlab = "Fitted values", ylab = "Residuals")
+```
+
+

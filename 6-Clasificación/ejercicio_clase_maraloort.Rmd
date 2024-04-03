@@ -162,6 +162,8 @@ perf <- performance(pred, "tpr", "fpr")
 plot (perf)
 ```
 
+# Ejercicio 3
+
 ```{r}
 test<-read.delim("data/test.csv", sep = "\t", head = TRUE)
 train<-read.delim("data/train.csv", sep="\t", head = TRUE)
@@ -185,8 +187,8 @@ knn_test$id <- NULL
 # Load the class package
 library(class)
 
-knn_train$Sex <- as.numeric(knn_train$Sex)
-knn_test$Sex <- as.numeric(knn_test$Sex)
+knn_train$Sex <- as.numeric(factor(knn_train$Sex))
+knn_test$Sex <- as.numeric(factor(knn_test$Sex))
 
 pred <- knn(train = knn_train, test = knn_test, cl = train_labels, k = 5)
 
@@ -194,7 +196,27 @@ pred <- knn(train = knn_train, test = knn_test, cl = train_labels, k = 5)
 tab <- table(test_labels, pred)
 
 # Print out the confusion matrix
-tab
 acc_knn <- sum(diag(tab)) / sum (tab)
+```
+
+```{r}
+#Load the class package, define range accs
+library(class)
+range <- 1:round(0.2*nrow(knn_train))
+accs <- rep(0, length(range))
+
+for(k in range){
+  pred <- knn(knn_train, knn_test, train_labels, k = k)
+  conf <- table(test_labels, pred)
+  
+  accs[k] <- sum(diag(conf)/sum(conf))
+}
+
+# Plot the accuracies. Title of x-axis is 'k'
+plot(range, accs, xlab='k')
+
+#Calculate the best k
+which.max(accs)
+accs[which.max(accs)]
 ```
 
