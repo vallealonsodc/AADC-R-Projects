@@ -40,12 +40,13 @@ Este enfoque multidimensional nos proporciona una comprensión profunda de los f
 
 La idea del proyecto ha surgido de la búsqueda en Kaggle de proyectos de análisis de datos. En esta búsqueda, encontramos un proyecto muy completo sobre el Análisis del Reporte Mundial de Felicidad de 2017 [1]. El proyecto me generó gran curiosidad por cómo estaba planteado y por ser un tópico de divulgación bastante interesante por lo que decidí realizar yo también un Análisis pero sobre el Reporte Mundial de Felicidad 2024.
 
-Por tanto, los datos utilizados se han extraído directamente de la página oficial del Reporte Mundial de Felicidad [2]. Estos datos se encontraron en formato xls en un excel. Una de las tareas principales del análisis ha sido limpiar los datos. Primero limpiando el excel para que sea legible por la función R correspondiente y posteriormente
+Por tanto, los datos utilizados se han extraído directamente de la página oficial del Reporte Mundial de Felicidad [2]. Estos datos se encontraron en formato xls en un excel. Una de las tareas principales del análisis ha sido limpiar los datos descargados. Primero limpiando el ''raw'' excel para que sea legible por la función R correspondiente y posteriormente realizando modificaciones sobre las variables para igualar su estructura al dataset del proyecto Kaggle.
 
+No obstante, este proyecto no realiza algunos de los procedimientos que se realizan en el proyecto de 2017 y, por el contrario, añade procedimientos de Aprendizaje No Supervisado, para que el proyecto sea más completo con la asignatura de Análisis Avanzado de Datos Clínicos.
 
-https://worldhappiness.report/ed/2024/#appendices-and-data
+La ventaja de trabajar en paralelo con el proyecto del Reporte Mundial de Felicidad de 2017 es poder realizar además un estudio comparativo de las tendecias que han cambiado durante estos 7 años (2017-2024). Los resultados del estudio comparativo se presentan en el capítulo de conclusiones.
 
-https://www.kaggle.com/code/javadzabihi/happiness-2017-visualization-prediction/input?select=2017.csv
+A continuación, las librerias que se han utilizado en el proyecto.
 
 ```{r}
 install.packages("readxl")
@@ -679,9 +680,22 @@ La regresión lineal múltiple y la red neuronal hicieron el mejor trabajo y pre
 
 # 6. Conclusiones 
 
-- Visualizacion
-- Resultados muy distintos en algunos momentos de correlacion han pasado 7 años
-- Problemas con los datos en algunos momentos 
-- aprendizaje no supervisado
+Finalmente, de todo el análisis y la comparación con el Reporte Mundial de Felicidad de 2017 [1], destacamos las siguientes conclusiones:
+
+- **La importancia del análisis exploratorio.** Más allá de aplicar de algoritmos de ML también se puede extraer información MUY significativa mediante la exploración visual del dataset. En este caso, el análisis exploratorio ha sido fundamental para entender la improtancia de las diferentes variables en la puntuación del Felicidad obtenida.
+
+- **Diferentes tendencias a lo largo del tiempo.** Como era de esperar, pasados 7 años entre el proyecto de Kaggle y este proyecto, en numerosas ocasiones sobre todo durante el análisis exploratorio, las tendencias habían cambiado y variables que antes eran muy significativas ahora no lo eran y viceversa. Destacaría la importancia actual de la economía en prácticamente todos los continentes.
+
+- **Beneficios del Aprendizaje No Supervisado.** A pesar de que el proyecto de Kaggle no realizaba análisis no supervisado, creo que ha sido muy positivo para el proyecto haber aplicado algunas de estas técnicas, también para poder comparar entre agrupación y predicción y extraer resultados de formas distintas.
+
 
 # 7. Bibliografía
+
+[1] Proyecto del Reporte Mundial de Felicidad 2017. https://www.kaggle.com/code/javadzabihi/happiness-2017-visualization-prediction/input?select=2017.csv. 
+
+[2] Página web oficial del Reporte Mundial de Felicidad 2024. https://worldhappiness.report/ed/2024/#appendices-and-data
+
+
+
+
+
